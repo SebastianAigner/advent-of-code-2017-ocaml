@@ -525,7 +525,8 @@ let rec occurences x list = match list with
 | h::t -> if h = x then 1 + occurences x t else occurences x t
 
 
-let has_duplicates list = let list_of_dups = List.map (fun word -> occurences word list) list |> List.filter (fun occ -> occ > 1) in
+let has_duplicates list = let list_of_dups = List.map (fun word -> occurences word list) list
+    |> List.filter (fun occ -> occ > 1) in
     match list_of_dups with
     | [] -> false
     | _ -> true
@@ -535,3 +536,36 @@ let num_of_unique_passwords pwlist = List.map (String.split_on_char ' ') pwlist
     |> List.filter (fun x -> x)
     |> List.length
 
+let rec char_arr_of_string s = match s with
+| "" -> []
+| ch -> (String.get ch 0) :: char_arr_of_string (String.sub ch 1 (String.length ch - 1))
+
+
+let rec is_same al bl = match (al, bl) with
+| ([], []) -> true
+| (ah::at, bh::bt) -> if ah = bh then is_same at bt else false
+| _ -> false
+
+
+let is_anagram a b =
+    let a = char_arr_of_string a |> List.sort (Char.compare) in
+    let b = char_arr_of_string b |> List.sort (Char.compare) in
+    if List.length a <> List.length b then false else is_same a b
+
+
+let rec count_where cond list = match list with
+| [] -> 0
+| h::t -> if cond h then 1 + count_where cond t else count_where cond t
+
+let list_nonempty = function
+| [] -> false
+| _ -> true
+
+
+let does_passphrase_have_anagram passphrase = let words = String.split_on_char ' ' passphrase in
+    List.map (fun word -> count_where (is_anagram word) words) words
+    |> List.filter (fun occ -> occ > 1)
+    |> list_nonempty
+
+let res_two = List.map (does_passphrase_have_anagram) passwords
+|> count_where (fun x -> not x)
