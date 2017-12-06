@@ -104,5 +104,8 @@ let rec flatten = function
 let bigger (x,y) = if x > y then x else y
 let smaller (x,y) = if x < y then x else y
 
-let res_two input = List.map (fun row -> (find_divisor_pair row)) input |> flatten |> List.map (fun pair -> (bigger pair) / (smaller pair)) |> List.fold_left (+) 0
+let res_two input = List.map (fun row -> (find_divisor_pair row)) input
+    |> flatten
+    |> List.map (fun pair -> (bigger pair) / (smaller pair))
+    |> List.fold_left (+) 0
 
