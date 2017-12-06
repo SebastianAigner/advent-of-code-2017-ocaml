@@ -45,33 +45,10 @@ let res_one input = List.fold_left (+) 0 (individual_checksums input)
 
 let is_dividing a b = a mod b = 0 || b mod a == 0
 
-let shift_last_to_first = function
-| [] -> []
-| [x] -> [x]
-| l -> begin match List.rev l with
-    | [] -> []
-    | h::t -> h :: (List.rev t)
-end
-
-let rec shift_n_times n list = match n with
-| 0 -> list
-| _ -> shift_n_times (n-1) (shift_last_to_first list)
-
 let  get_divisor a list = let l = List.filter (fun elem -> is_dividing a elem) list in
     match l with
     | [x] -> Some(a,x)
     | _ -> None
-
-let rec remove_nth n list = match n with
-| 0 -> begin match list with
-    | [] -> []
-    | [x] -> []
-    | h::t -> t
-    end
-| n -> begin match list with
-    | h::t -> h::(remove_nth (n-1) t)
-    | _ -> []
-    end
 
 let rec headify n list =
 match n with
@@ -82,7 +59,8 @@ match list with
 | h::t -> headify (n-1) t @ [h]
 end
 
-let find_divisor_pair list = let len = List.length list in 
+let find_divisor_pair list =
+    let len = List.length list in 
     let rec impl idx =
         let list = (headify idx list) in
         match list with
