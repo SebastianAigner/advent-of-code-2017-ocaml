@@ -1,9 +1,10 @@
 let rec sanitized = function
 | [] -> []
-| h::t -> (if h <> "" then [h] else []) @ sanitized t
+| h::t -> let ss = sanitized t in
+    if h <> "" then h::ss else ss
+
 
 let passwords in_str = String.split_on_char '\n' in_str |> sanitized
-
 
 let rec occurences x list = match list with
 | [] -> 0
@@ -15,9 +16,11 @@ let has_duplicates list = let list_of_dups = List.map (fun word -> occurences wo
     | [] -> false
     | _ -> true
 
+let id x = x
+
 let num_of_unique_passwords pwlist = List.map (String.split_on_char ' ') pwlist
     |> List.map (fun passphrase -> not (has_duplicates passphrase))
-    |> List.filter (fun x -> x)
+    |> List.filter id
     |> List.length
 
 let rec char_arr_of_string s = match s with
@@ -30,7 +33,6 @@ let rec is_same al bl = match (al, bl) with
 | (ah::at, bh::bt) -> if ah = bh then is_same at bt else false
 | _ -> false
 
-
 let is_anagram a b =
     let a = char_arr_of_string a |> List.sort (Char.compare) in
     let b = char_arr_of_string b |> List.sort (Char.compare) in
@@ -41,9 +43,7 @@ let rec count_where cond list = match list with
 | [] -> 0
 | h::t -> if cond h then 1 + count_where cond t else count_where cond t
 
-let list_nonempty = function
-| [] -> false
-| _ -> true
+let list_nonempty = (=) []
 
 
 let does_passphrase_have_anagram passphrase = let words = String.split_on_char ' ' passphrase in
